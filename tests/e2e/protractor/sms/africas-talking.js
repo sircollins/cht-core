@@ -224,7 +224,7 @@ describe('africas talking api', () => {
 
     afterEach(() => utils.deleteDoc(savedDoc));
 
-    xit('- shows content', async () => {
+    it('- shows content', async () => {
       await commonElements.goToReportsNative();
       const firstReport = reportsElements.firstReport();
 

@@ -331,7 +331,8 @@ export class ContactsContentComponent implements OnInit, OnDestroy {
     if (this.subscriptionSelectedContactForms) {
       this.subscriptionSelectedContactForms.unsubscribe();
     }
-
+    console.warn('contact doc to filter forms :: ', this.selectedContact.doc);
+    console.warn('contact summary context to filter forms :: ', this.selectedContact.summary.context);
     this.subscriptionSelectedContactForms = this.xmlFormsService.subscribe(
       'SelectedContactReportForms',
       {
@@ -340,6 +341,7 @@ export class ContactsContentComponent implements OnInit, OnDestroy {
         contactForms: false,
       },
       (error, forms) => {
+        console.warn('filtered forms :: ', forms);
         if (error) {
           console.error('Error fetching relevant forms', error);
           return;
@@ -367,6 +369,8 @@ export class ContactsContentComponent implements OnInit, OnDestroy {
             };
           })
           .sort((a, b) => a.title?.localeCompare(b.title));
+
+        console.warn('Forms for action button :: ', formSummaries);
         this.globalActions.updateRightActionBar({ relevantForms: formSummaries });
       }
     );

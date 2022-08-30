@@ -92,15 +92,17 @@ export class XmlFormsService {
     return this.parseProvider.parse(expression)(this.xmlFormsContextUtilsService, context);
   }
 
-  private filterAll(forms, options) {
-    return this.ngZone.runOutsideAngular(() => this._filterAll(forms, options));
+  private filterAll(forms, options, name?) {
+    return this.ngZone.runOutsideAngular(() => this._filterAll(forms, options, name));
   }
 
-  private _filterAll(forms, options) {
+  private _filterAll(forms, options, name?) {
     return this.userContactService.get().then(user => {
       // clone the forms list so we don't affect future filtering
       forms = forms.slice();
-      const promises = forms.map(form => this.filter(form, options, user));
+      console.warn(name + '!!!! - 1');
+      console.warn('forms :: ', forms);
+      const promises = forms.map(form => this.filter(form, options, user, name));
       return Promise
         .all(promises)
         .then((resolutions) => {
@@ -115,12 +117,18 @@ export class XmlFormsService {
     });
   }
 
-  private filterContactTypes (context, doc) {
+  private filterContactTypes (context, doc, name) {
     if (!doc) {
       return Promise.resolve(true);
     }
     const contactType = this.contactTypesService.getTypeId(doc);
+    if (name === 'SelectedContactReportForms') {
+      console.warn('get contact type from contact doc :: ', contactType);
+    }
     return this.contactTypesService.get(contactType).then(type => {
+      if (name === 'SelectedContactReportForms') {
+        console.warn('found contact type :: ', type);
+      }
       if (!type) {
         // not a contact type
         return true;
@@ -165,31 +173,51 @@ export class XmlFormsService {
     return this.authService.has(form.context.permission);
   }
 
-  private filter(form, options, user) {
+  private filter(form, options, user, name) {
+    console.warn('check point 1', form);
     if (!options.includeCollect && form.context && form.context.collect) {
       return false;
     }
-
+    console.warn('check point 2', options.contactForms);
     if (options.contactForms !== undefined) {
       const isContactForm = form._id.indexOf('form:contact:') === 0;
       if (options.contactForms !== isContactForm) {
         return false;
       }
     }
-
+    console.warn('check point 3');
     // Context filters
     if (options.ignoreContext) {
       return true;
     }
+    console.warn('check point 4');
     if (!form.context) {
       // no defined filters
       return true;
     }
-
+    console.warn(name+ '!!!! - 2');
+    if (name === 'SelectedContactReportForms') {
+      console.warn('form to evaluate:: ', form, options);
+    }
     return this
-      .filterContactTypes(form.context, options.doc)
+      .filterContactTypes(form.context, options.doc, name)
       .then(valid => valid && this.checkFormPermissions(form))
-      .then(valid => valid && this.checkFormExpression(form, options.doc, user, options.contactSummary));
+      .then(valid => {
+        if (name === 'SelectedContactReportForms')
+          console.warn('form permissions are valid :: ', JSON.stringify(form));
+
+        return valid;
+      })
+      .then(valid => valid && this.checkFormExpression(form, options.doc, user, options.contactSummary))
+      .then(valid => {
+        if (name === 'SelectedContactReportForms') {
+          console.warn(
+            'form expression is valid - 1. form, 2. options.doc, 3. user, 4. options.contactSummary :: ',
+            JSON.stringify(form), JSON.stringify(options.doc), JSON.stringify(user),
+            JSON.stringify(options.contactSummary));
+        }
+        return valid;
+      });
   }
 
   private notify(error, forms?) {
@@ -242,7 +270,7 @@ export class XmlFormsService {
         return callback(error);
       }
       return this
-        .filterAll(forms, options)
+        .filterAll(forms, options, name)
         .then(results => callback(null, results))
         .catch(err => callback(err));
     };

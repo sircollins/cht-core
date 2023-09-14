@@ -4,7 +4,7 @@ const rewire = require('rewire');
 
 const db = require('../../../../src/db');
 const env = require('../../../../src/environment');
-const rpn = require('request-promise-native');
+const rpn = require('../../../../src/couch-request');
 const databases = require('../../../../src/services/setup/databases');
 const upgradeLogService = require('../../../../src/services/setup/upgrade-log');
 

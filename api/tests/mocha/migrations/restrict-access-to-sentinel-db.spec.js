@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 const chai = require('chai');
-const request = require('request-promise-native');
+const request = require('../../../src/couch-request');
 const environment = require('../../../src/environment');
 const migration = require('../../../src/migrations/restrict-access-to-sentinel-db');
 

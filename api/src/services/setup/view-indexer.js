@@ -1,4 +1,4 @@
-const rpn = require('request-promise-native');
+const rpn = require('../../couch-request');
 const _ = require('lodash');
 
 const upgradeLogService = require('./upgrade-log');

@@ -3,7 +3,7 @@
  */
 const url = require('url');
 const path = require('path');
-const request = require('request-promise-native');
+const request = require('../src/couch-request');
 const environment = require('./environment');
 const logger = require('./logger');
 const DEFAULT_BATCH_LIMIT = 100; // 100 is a good compromise of performance and stability

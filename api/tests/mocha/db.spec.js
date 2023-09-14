@@ -2,7 +2,7 @@ const sinon = require('sinon');
 require('chai').use(require('chai-as-promised'));
 const { expect } = require('chai');
 const rewire = require('rewire');
-const rpn = require('request-promise-native');
+const rpn = require('../../src/couch-request');
 
 let db;
 let unitTestEnv;

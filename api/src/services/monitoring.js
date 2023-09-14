@@ -1,4 +1,4 @@
-const request = require('request-promise-native');
+const request = require('../couch-request');
 const moment = require('moment');
 
 const db = require('../db');

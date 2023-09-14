@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-const rpn = require('request-promise-native');
+const rpn = require('../../couch-request');
 
 const db = require('../../db');
 const logger = require('../../logger');
@@ -322,13 +322,16 @@ const makeUpgradeRequest = async (payload) => {
   let url;
   try {
     url = new URL(UPGRADE_SERVICE_URL);
+    console.log({url})
     url.pathname = '/upgrade';
   } catch (err) {
     throw new Error(`Invalid UPGRADE_SERVICE_URL: ${UPGRADE_SERVICE_URL}`);
   }
 
   const response = await rpn.post({ url: url.toString(), json: true, body: payload });
+  console.log({response})
   const success = upgradeResponseSuccess(payload, response);
+  console.log({payload, success})
   if (!success) {
     logger.error('None of the docker-compose files or containers were updated: %o', response);
     logger.error('If deploying through docker-compose, please make sure that the CHT docker-compose files ' +

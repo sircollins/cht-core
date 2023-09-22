@@ -15,6 +15,7 @@ const translations = require('../../../src/translations');
 const privacyPolicy = require('../../../src/services/privacy-policy');
 const config = require('../../../src/config');
 const { tokenLogin, roles, users } = require('@medic/user-management')(config, db);
+const request = require('@medic/couch-request');
 const template = require('../../../src/services/template');
 const serverUtils = require('../../../src/server-utils');
 

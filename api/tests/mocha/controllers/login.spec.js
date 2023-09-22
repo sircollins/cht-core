@@ -11,7 +11,7 @@ const privacyPolicy = require('../../../src/services/privacy-policy');
 const sinon = require('sinon');
 const config = require('../../../src/config');
 const { tokenLogin, roles, users } = require('@medic/user-management')(config, db);
-const request = require('request-promise-native');
+const request = require('@medic/couch-request');
 const template = require('../../../src/services/template');
 const fs = require('fs');
 

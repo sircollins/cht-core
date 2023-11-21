@@ -22,7 +22,7 @@ process.env.COUCHDB_USER = constants.USERNAME;
 process.env.COUCHDB_PASSWORD = constants.PASSWORD;
 process.env.CERTIFICATE_MODE = constants.CERTIFICATE_MODE;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0; // allow self signed certificates
-const DEBUG = process.env.DEBUG || process.env.LOGLEVEL === 'debug';
+const DEBUG = process.env.DEBUG;
 
 let originalSettings;
 let dockerVersion;
@@ -138,11 +138,11 @@ const request = (options, { debug } = {}) => {
   options.uri = options.uri || `${constants.BASE_URL}${options.path}`;
   options.json = options.json === undefined ? true : options.json;
 
-  if (debug) {
-    console.log('DEBUGGING');
-    console.log('SENDING REQUEST');
-    console.log(JSON.stringify(options, null, 2));
-  }
+  console.log({debug, loglevel: process.env.LOGLEVEL});
+  console.log('DEBUGGING');
+  console.log('SENDING REQUEST');
+  console.log(JSON.stringify(options, null, 2));
+
 
   options.transform = (body, response, resolveWithFullResponse) => {
     // we might get a json response for a non-json request.
@@ -155,13 +155,13 @@ const request = (options, { debug } = {}) => {
   };
 
   return rpn(options).catch(err => {
+
+    console.log('DEBUGGING');
+    const { name = null, statusCode = null, message = null, options = null, response = null } = err;
+    console.error('Response Error', { name, statusCode, message, options, response });
     err.responseBody = err.response && err.response.body;
     console.warn(`Error with request: ${options.method || 'GET'} ${options.uri}`);
-    if (debug) {
-      console.log('DEBUGGING');
-      const { name = null, statusCode = null, message = null, options = null, response = null } = err;
-      console.log('Response Error', { name, statusCode, message, options, response });
-    }
+
     throw err;
   });
 };
